@@ -648,7 +648,7 @@ cgdisk /dev/sdX
 You’ll get a TUI interface. It’s self-explanatory:
 
 - Use arrows to select “New”
-- Type partition sizes like `512M`, `100%`
+- Type partition sizes like `512M`, `100\%`
 - Set type codes:
   - `EF00` for EFI System
   - `8300` for Linux filesystem
@@ -860,55 +860,668 @@ If all that's done, you’re ready to give this beast a soul — hostname, local
 \clearpage
 
 
-\chapter{Configuring the System}
-\section{Fstab}
+\chapter{System Configuration}
+
+\section*{You've Built the Flesh. Now It Needs a Brain.}
+
+You've chrooted into your fresh new Arch system. It knows nothing. It has no sense of time, no language, no name, no user. If you were to reboot now, you'd have a blank disk with a kernel that doesn't even know it exists.
+
+Let’s fix that.
+
+\section{Set the Time Zone}
+
+Start by setting the system’s time zone. You don’t want your logs timestamped in UTC+Mars.
+
+\subsection*{Find your time zone:}
+
 \begin{lstlisting}
-genfstab -U /mnt >> /mnt/etc/fstab
+ls /usr/share/zoneinfo
 \end{lstlisting}
 
-\section{Chroot and Time}
+This directory contains all time zones. Drill down into your region and city, e.g.:
+
 \begin{lstlisting}
-arch-chroot /mnt
+ls /usr/share/zoneinfo/Asia
+\end{lstlisting}
+
+Once you know yours (e.g., `Asia/Kolkata`), set it:
+
+\begin{lstlisting}
 ln -sf /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
+\end{lstlisting}
+
+\subsection*{Sync the hardware clock:}
+
+\begin{lstlisting}
 hwclock --systohc
 \end{lstlisting}
 
-\section{Locale}
+This sets the hardware clock (BIOS clock) to match the system time.
+
+\section{Set Locale (Language + Encoding)}
+
+Edit `/etc/locale.gen` to uncomment the locales you want.
+
 \begin{lstlisting}
-vim /etc/locale.gen
-# Uncomment: en_US.UTF-8 UTF-8
+nano /etc/locale.gen
+\end{lstlisting}
+
+Find the line:
+
+\begin{lstlisting}
+#en_US.UTF-8 UTF-8
+\end{lstlisting}
+
+And remove the `#`:
+
+\begin{lstlisting}
+en_US.UTF-8 UTF-8
+\end{lstlisting}
+
+Save and exit (`Ctrl+O`, `Enter`, `Ctrl+X`).
+
+Then generate the locales:
+
+\begin{lstlisting}
 locale-gen
+\end{lstlisting}
+
+\subsection*{Set default system language:}
+
+Create or edit `/etc/locale.conf`:
+
+\begin{lstlisting}
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 \end{lstlisting}
 
-\section{Hostname}
+\section{Set the Hostname}
+
+Pick a name for your machine. This will appear in your shell prompt, your SSH sessions, and every log file. It’s your system’s name in the realm.
+
 \begin{lstlisting}
-echo "archmachine" > /etc/hostname
+echo "archbeast" > /etc/hostname
 \end{lstlisting}
 
-\chapter{Bootloader}
-Install `systemd-boot`:
+\section{Configure /etc/hosts (Networking ID)}
+
+Edit your hosts file to match your hostname:
+
+\begin{lstlisting}
+nano /etc/hosts
+\end{lstlisting}
+
+Add these lines:
+
+\begin{lstlisting}
+127.0.0.1    localhost
+::1          localhost
+127.0.1.1    archbeast.localdomain archbeast
+\end{lstlisting}
+
+Replace `archbeast` with your actual hostname.
+
+\section{Set Root Password}
+
+\begin{lstlisting}
+passwd
+\end{lstlisting}
+
+Enter and confirm your root password. Choose wisely. You’re root — the god of this system.
+
+\section{Create a Non-Root User}
+
+Root is powerful — too powerful. You’ll want a regular user.
+
+\begin{lstlisting}
+useradd -m -G wheel -s /bin/bash rishi
+\end{lstlisting}
+
+This creates a user named `rishi`:
+- `-m`: makes a home directory
+- `-G wheel`: adds to the `wheel` group (for sudo access)
+- `-s /bin/bash`: sets the shell
+
+Set the user’s password:
+
+\begin{lstlisting}
+passwd rishi
+\end{lstlisting}
+
+\section{Enable \texttt{sudo} for Wheel Group}
+
+First, install sudo:
+
+\begin{lstlisting}
+pacman -S sudo
+\end{lstlisting}
+
+Then edit the sudoers file with:
+
+\begin{lstlisting}
+EDITOR=nano visudo
+\end{lstlisting}
+
+Find the line:
+
+\begin{lstlisting}
+# %wheel ALL=(ALL:ALL) ALL
+\end{lstlisting}
+
+Uncomment it (remove the `#`).
+
+Now any user in the `wheel` group can use `sudo`.
+
+\section{Install Networking Tools}
+
+Let’s install tools so you can connect to the internet after reboot.
+
+\begin{lstlisting}
+pacman -S networkmanager
+\end{lstlisting}
+
+Enable it for boot:
+
+\begin{lstlisting}
+systemctl enable NetworkManager
+\end{lstlisting}
+
+This gives you Wi-Fi/Ethernet management out of the box.
+
+\section{Install Text Editor (Because You’ll Need One)}
+
+Pick your poison:
+
+\begin{lstlisting}
+pacman -S vim
+\end{lstlisting}
+or
+\begin{lstlisting}
+pacman -S nano
+\end{lstlisting}
+
+Nano is easier, Vim is better (if you know it).
+
+\section{Generate initramfs (Boot Image)}
+
+This step generates the initramfs — a compressed archive that boots your kernel and mounts the root file system.
+
+Usually this happens automatically with `pacstrap`, but let’s be sure:
+
+\begin{lstlisting}
+mkinitcpio -P
+\end{lstlisting}
+
+That’s it. Your system is now configured to boot and function.
+
+Next up? The bootloader. Yes, the thing that makes your system show up when you turn it on.
+
+\clearpage
+
+
+
+\chapter{Bootloader Setup}
+
+\section*{This Is Where the Magic Happens}
+
+You’ve got a fully configured root filesystem, a working kernel, and an initramfs image ready to roll. But if you reboot now? Nothing happens.
+
+That’s because we haven’t installed the bootloader — the sacred whisperer that tells your firmware where to find your OS.
+
+Let’s fix that.
+
+\section{Option A: systemd-boot (UEFI Only, Arch Approved)}
+
+This is the cleanest, fastest bootloader for UEFI systems. It integrates tightly with systemd and doesn't carry GRUB’s bloaty legacy.
+
+\subsection*{Step 1: Ensure You’re in UEFI Mode}
+
+Just double check, again:
+
+\begin{lstlisting}
+ls /sys/firmware/efi/efivars
+\end{lstlisting}
+
+If it’s empty or missing, stop — you need to use GRUB instead (jump to Section B).
+
+\subsection*{Step 2: Install systemd-boot}
+
 \begin{lstlisting}
 bootctl install
 \end{lstlisting}
 
-\texttt{/boot/loader/entries/arch.conf}:
+This installs `systemd-boot` into your EFI system partition (`/boot`), assuming you mounted `/dev/sdX1` to `/boot` earlier (as instructed).
+
+You should see:
+
+\begin{lstlisting}
+Created "/boot/EFI/systemd".
+Copied "/usr/lib/systemd/boot/efi/systemd-bootx64.efi" → "/boot/EFI/systemd/systemd-bootx64.efi".
+Created EFI boot entry.
+\end{lstlisting}
+
+\subsection*{Step 3: Create the Loader Configuration File}
+
+Create `/boot/loader/loader.conf`:
+
+\begin{lstlisting}
+nano /boot/loader/loader.conf
+\end{lstlisting}
+
+Add the following:
+
+\begin{lstlisting}
+default arch
+timeout 3
+console-mode max
+editor no
+\end{lstlisting}
+
+- `default arch`: Sets which entry boots by default
+- `timeout`: How long the bootloader waits before auto-boot
+- `console-mode max`: Makes the font less potato
+- `editor no`: Disables editing the boot entry mid-boot
+
+\subsection*{Step 4: Create the Boot Entry}
+
+Create a file at `/boot/loader/entries/arch.conf`:
+
+\begin{lstlisting}
+nano /boot/loader/entries/arch.conf
+\end{lstlisting}
+
+Paste this:
+
 \begin{lstlisting}
 title   Arch Linux
 linux   /vmlinuz-linux
 initrd  /initramfs-linux.img
-options root=PARTUUID=...
+options root=UUID=your-root-uuid-here rw
 \end{lstlisting}
 
-\chapter{Final Steps}
+Now get your root partition’s UUID:
+
 \begin{lstlisting}
-passwd
+blkid
+\end{lstlisting}
+
+Find the line for your root partition (e.g., `/dev/sda2`) and copy its UUID. Replace `your-root-uuid-here` with it (keep the UUID in the same format).
+
+Your final entry might look like:
+
+\begin{lstlisting}
+options root=UUID=abc1234-5678-dead-beef-1234567890ab rw
+\end{lstlisting}
+
+You’re done. That’s it. When you reboot, systemd-boot will pick up your entry and boot Arch.
+
+\section{Option B: GRUB (UEFI or Legacy BIOS)}
+
+If you’re stuck with BIOS, or you dual-boot Windows, or your firmware is allergic to simplicity, you’ll need GRUB.
+
+\subsection*{Step 1: Install GRUB and Required Tools}
+
+\begin{lstlisting}
+pacman -S grub efibootmgr dosfstools os-prober mtools
+\end{lstlisting}
+
+- `efibootmgr`: Required for UEFI
+- `os-prober`: Detects other OSes (Windows, other Linux distros)
+- `mtools`, `dosfstools`: Required to work with FAT partitions (EFI)
+
+\subsection*{Step 2A: UEFI GRUB Installation}
+
+\begin{lstlisting}
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+\end{lstlisting}
+
+\subsection*{Step 2B: BIOS GRUB Installation}
+
+\begin{lstlisting}
+grub-install --target=i386-pc /dev/sdX
+\end{lstlisting}
+
+Where `/dev/sdX` is your disk, *not* a partition (e.g., `/dev/sda` not `/dev/sda1`).
+
+\subsection*{Step 3: Generate GRUB Config}
+
+\begin{lstlisting}
+grub-mkconfig -o /boot/grub/grub.cfg
+\end{lstlisting}
+
+You’ll see it scanning for kernels and other OSes. If you installed `os-prober`, it might pick up Windows or another Linux install.
+
+And with that, you have a bootloader.
+
+\section{Checkpoint: Ready for Reboot?}
+
+Make sure:
+
+- systemd-boot or GRUB is installed
+- You’ve created at least one boot entry
+- `blkid` shows UUIDs and they match your config
+- Your boot partition is correctly mounted
+
+Now… exit and unmount:
+
+\begin{lstlisting}
 exit
 umount -R /mnt
+\end{lstlisting}
+
+Then finally:
+
+\begin{lstlisting}
 reboot
 \end{lstlisting}
 
-\chapter{After Reboot}
-You now have a minimal Arch Linux installation! Configure your user, networking, packages, and (if desired) a desktop environment next.
+If all goes well, your screen will flash black, your heart will skip, and then you’ll see the **Arch Linux** bootloader screen.
+
+Welcome to the club.
+
+\clearpage
+
+
+\chapter{Post-Install Essentials}
+
+\section*{It Boots. Now Let’s Make It Functional.}
+
+Congrats. If you’ve made it this far, you’ve done more than 90\% of the world ever will. Your Arch system boots. It breathes. But it doesn’t yet *live*.
+
+This chapter is about giving it the basic tools it needs to become a daily driver. We’re not talking KDE Plasma or i3 just yet — we’re talking **drivers**, **microcode**, **audio**, and a few **sane defaults**.
+
+\section{Update Everything}
+
+Even though `pacstrap` installed the latest snapshot, package updates can happen hourly. Best to start clean.
+
+\begin{lstlisting}
+pacman -Syu
+\end{lstlisting}
+
+This updates all packages to the current latest from the Arch mirrors.
+
+\section{Install CPU Microcode (Do Not Skip)}
+
+Microcode is firmware for your CPU. Yes, even the brain of your machine ships buggy code. We fix that here.
+
+\subsection*{For Intel CPUs:}
+
+\begin{lstlisting}
+pacman -S intel-ucode
+\end{lstlisting}
+
+Then edit your `arch.conf` (if using systemd-boot):
+
+\begin{lstlisting}
+nano /boot/loader/entries/arch.conf
+\end{lstlisting}
+
+Add this **above** the `initrd /initramfs-linux.img` line:
+
+\begin{lstlisting}
+initrd /intel-ucode.img
+\end{lstlisting}
+
+\subsection*{For AMD CPUs:}
+
+\begin{lstlisting}
+pacman -S amd-ucode
+\end{lstlisting}
+
+Same edit applies in your boot entry.
+
+This ensures your CPU gets updated microcode at boot — crucial for stability and performance.
+
+\section{Audio — Because Silence is for Windows Users}
+
+Arch uses `pipewire` — the superior modern replacement for PulseAudio.
+
+\begin{lstlisting}
+pacman -S pipewire pipewire-alsa pipewire-pulse pipewire-jack wireplumber
+\end{lstlisting}
+
+Then enable the audio service:
+
+\begin{lstlisting}
+systemctl enable --now pipewire pipewire-pulse wireplumber
+\end{lstlisting}
+
+Test later with:
+
+\begin{lstlisting}
+speaker-test -c 2
+\end{lstlisting}
+
+\section{Graphics Drivers — Know Your GPU}
+
+Without a graphics driver, your system will feel like a potato in a freezer.
+
+\subsection*{Intel (Integrated Graphics):}
+
+\begin{lstlisting}
+pacman -S xf86-video-intel mesa vulkan-intel libva-intel-driver
+\end{lstlisting}
+
+\subsection*{AMD (Radeon/VEGA):}
+
+\begin{lstlisting}
+pacman -S xf86-video-amdgpu mesa vulkan-radeon libva-mesa-driver
+\end{lstlisting}
+
+\subsection*{NVIDIA (Dedicated Cards):}
+
+\begin{lstlisting}
+pacman -S nvidia nvidia-utils nvidia-settings
+\end{lstlisting}
+
+Also run:
+
+\begin{lstlisting}
+nvidia-modprobe
+\end{lstlisting}
+
+> 💡 You don’t need `xf86-video-vesa`. That’s a fallback and usually worse.
+
+\section{Bluetooth (If You Need It)}
+
+\begin{lstlisting}
+pacman -S bluez bluez-utils
+systemctl enable --now bluetooth
+\end{lstlisting}
+
+Use `bluetoothctl` for pairing devices from terminal.
+
+\section{Printing (For Those Who Still Use Paper)}
+
+\begin{lstlisting}
+pacman -S cups system-config-printer
+systemctl enable --now cups
+\end{lstlisting}
+
+CUPS is the printing daemon. Works with most USB/WiFi printers via GUI once DE is installed.
+
+\section{Network Tools (Optional, But Helpful)}
+
+\begin{lstlisting}
+pacman -S wget curl git
+\end{lstlisting}
+
+Useful for fetching things, cloning dotfiles, and surviving in general.
+
+\section{Basic Terminal + GUI Tools}
+
+\subsection*{File Manager (CLI):}
+
+\begin{lstlisting}
+pacman -S ranger
+\end{lstlisting}
+
+\subsection*{Terminal Emulators:}
+
+\begin{lstlisting}
+pacman -S alacritty kitty
+\end{lstlisting}
+
+\subsection*{Fonts:}
+
+\begin{lstlisting}
+pacman -S ttf-dejavu ttf-liberation noto-fonts
+\end{lstlisting}
+
+Trust me — install fonts before your DE. Otherwise half the UI will look like corrupted boxes.
+
+\section{Optional: Enable Reflector for Faster Mirrors}
+
+Faster mirrors = faster installs/updates. Install and enable reflector:
+
+\begin{lstlisting}
+pacman -S reflector
+\end{lstlisting}
+
+Then enable the mirror ranking service:
+
+\begin{lstlisting}
+systemctl enable reflector.timer
+\end{lstlisting}
+
+You can also manually update mirrors:
+
+\begin{lstlisting}
+reflector --latest 10 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+\end{lstlisting}
+
+\section{Checkpoint Before Graphical Setup}
+
+✅ System updated  
+✅ Microcode installed  
+✅ Audio working via pipewire  
+✅ Graphics drivers installed  
+✅ Bluetooth and printing services ready  
+✅ Fonts and terminal tools in place  
+
+You're now ready for a display server and a desktop environment — a throne for your new OS.
+
+\clearpage
+
+
+\chapter{Graphical Environment Setup}
+
+\section*{CLI is Pure, But GUI is Useful}
+
+Yes, the terminal is a sacred rite. But there comes a time to bless your Arch system with **vision** — a graphical environment.
+
+In this chapter:
+
+\begin{enumerate}
+  \item We’ll install a display server (Wayland-first, X11 optional)
+  \item Choose a desktop environment or window manager
+  \item Set up a display/login manager or `startx`
+\end{enumerate}
+
+\section{Wayland is Now}
+
+Wayland is no longer the future — it’s the present. It’s the default for GNOME, KDE Plasma, and others.
+
+X11 is still supported, but it's only used:
+\begin{itemize}
+  \item For legacy apps or WMs
+  \item When Wayland has known compatibility issues
+\end{itemize}
+
+Unless you have a specific need, stick to **Wayland**.
+
+\section{Installing Wayland (if not bundled)}
+
+Most DEs (GNOME, KDE) bring Wayland along. But to be explicit:
+
+\begin{lstlisting}
+pacman -S wayland xdg-desktop-portal xdg-desktop-portal-wlr
+\end{lstlisting}
+
+Note: Some portals are DE-specific — GNOME/KDE pull their own.
+
+\section{Installing a Desktop Environment (Wayland-First Choices)}
+
+\subsection*{Option A: KDE Plasma 6 (Now Wayland by Default)}
+
+\begin{lstlisting}
+pacman -S plasma-meta kde-applications qt6-wayland
+pacman -S sddm
+systemctl enable sddm
+\end{lstlisting}
+
+Wayland will be default. If you ever want to switch to X11, just select it from the SDDM session menu.
+
+\subsection*{Option B: GNOME (Wayland Default)}
+
+\begin{lstlisting}
+pacman -S gnome gnome-extra
+systemctl enable gdm
+\end{lstlisting}
+
+GDM launches into Wayland by default. No config needed.
+
+\subsection*{Option C: Sway (Wayland-native i3 Alternative)}
+
+\begin{lstlisting}
+pacman -S sway alacritty foot wl-clipboard xwayland
+\end{lstlisting}
+
+Sway is a tiling window manager for Wayland. `xwayland` allows legacy X apps to run.
+
+You can launch Sway from TTY:
+
+\begin{lstlisting}
+exec sway
+\end{lstlisting}
+
+\subsection*{Option D: XFCE (X11 Only, for Now)}
+
+\begin{lstlisting}
+pacman -S xfce4 xfce4-goodies
+pacman -S lightdm lightdm-gtk-greeter
+systemctl enable lightdm
+\end{lstlisting}
+
+Still stuck on X11, but extremely lightweight.
+
+\section{Display Manager vs startx}
+
+- A **Display Manager** gives you a GUI login screen.
+- `startx` (X11) or `exec sway` (Wayland) are CLI launch options.
+
+If you're using GNOME or KDE: use GDM or SDDM.  
+If using a Wayland WM like Sway, you can launch manually from TTY.
+
+\subsection*{Make GUI login default:}
+
+\begin{lstlisting}
+systemctl set-default graphical.target
+\end{lstlisting}
+
+\section{Fonts and Themes}
+
+Always install fonts before launching a DE:
+
+\begin{lstlisting}
+pacman -S ttf-dejavu ttf-liberation noto-fonts ttf-nerd-fonts-symbols
+\end{lstlisting}
+
+GTK/Qt Theme config:
+
+\begin{lstlisting}
+pacman -S lxappearance qt5ct qt6ct
+\end{lstlisting}
+
+\section{Post-DE Checklist}
+
+✅ Wayland installed and used by default  
+✅ GNOME/KDE auto-launch with GDM/SDDM  
+✅ Fonts and themes configured  
+✅ Display target set to graphical  
+✅ You can launch into GUI on boot (or via TTY for Sway)
+
+You now wield a **Wayland-powered** desktop Arch system. You didn’t just install an OS — you cultivated a kingdom.
+
+\clearpage
 
 \end{document}
