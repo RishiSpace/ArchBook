@@ -1,0 +1,35 @@
+\contentsline {chapter}{\numberline {1}Introduction}{5}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Preinstallation}{7}{chapter.2}%
+\contentsline {chapter}{\numberline {3}Connecting to the Internet}{13}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Wired Ethernet — The True Master Race}{13}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Wireless — The Path of Pain}{13}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Common Wi-Fi Failures and Fixes}{15}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Legacy Option: wifi-menu (Only Available on netctl-based ISOs)}{15}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Using a Static IP (Edge Case or Emergency)}{15}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Confirming You’re Online}{16}{section.3.6}%
+\contentsline {chapter}{\numberline {4}Partitioning the Disk}{17}{chapter.4}%
+\contentsline {section}{\numberline {4.1}The Boot Mode Dictates Your Partition Style}{17}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Identify the Target Disk (Don't Wipe the Wrong One)}{17}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Partition Layout (UEFI Scheme)}{18}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Using \texttt {fdisk} (Beginner-Friendly, Deadly If You Panic)}{18}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Using \texttt {cgdisk} (For Visual Learners Who Like Retro Interfaces)}{18}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Formatting the Partitions}{19}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Mounting the Filesystems}{19}{section.4.7}%
+\contentsline {section}{\numberline {4.8}Verify Mounts}{19}{section.4.8}%
+\contentsline {section}{\numberline {4.9}If You’re Using BIOS (MBR) Boot Instead...}{20}{section.4.9}%
+\contentsline {section}{\numberline {4.10}Final Checkpoint}{20}{section.4.10}%
+\contentsline {chapter}{\numberline {5}Installing the Base System}{21}{chapter.5}%
+\contentsline {section}{\numberline {5.1}What is \texttt {pacstrap}?}{21}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Minimal Example — Barebones Install}{21}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Commonly Added Packages (Optional but Useful)}{22}{section.5.3}%
+\contentsline {section}{\numberline {5.4}What \texttt {/mnt} Is, Really}{22}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Creating the \texttt {fstab} — The System's Map of Your Disk}{22}{section.5.5}%
+\contentsline {section}{\numberline {5.6}Enter the Void: \texttt {arch-chroot}}{22}{section.5.6}%
+\contentsline {chapter}{\numberline {6}Configuring the System}{25}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Fstab}{25}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Chroot and Time}{25}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Locale}{25}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Hostname}{25}{section.6.4}%
+\contentsline {chapter}{\numberline {7}Bootloader}{27}{chapter.7}%
+\contentsline {chapter}{\numberline {8}Final Steps}{29}{chapter.8}%
+\contentsline {chapter}{\numberline {9}After Reboot}{31}{chapter.9}%

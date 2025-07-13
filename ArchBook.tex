@@ -1,0 +1,914 @@
+\documentclass[12pt]{book}
+
+\usepackage[a4paper, margin=0.75in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{setspace}
+
+\definecolor{codegray}{rgb}{0.95,0.95,0.95}
+\definecolor{darkblue}{rgb}{0.0,0.0,0.5}
+
+\lstset{
+  backgroundcolor=\color{codegray},
+  basicstyle=\ttfamily\footnotesize,
+  frame=single,
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+  showstringspaces=false,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{darkblue}
+}
+
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{\chaptername\ \thechapter}{20pt}{\Huge}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  pdftitle={How to install Arch Linux},
+  pdfauthor={Rishikesh Giridhar},
+  pdfsubject={Arch Linux Guide},
+  pdfkeywords={Arch Linux, Installation, Guide, Minimal, Unix}
+}
+
+\pagestyle{fancy}
+\setlength{\headheight}{14.5pt} % <-- Add this line
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\nouppercase{\leftmark}}
+\fancyhead[LO]{\nouppercase{\rightmark}}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \vspace*{4cm}
+    {\Huge\bfseries How to install Arch Linux \par}
+    \vspace{1cm}
+    {\Large A Barebones, No-Nonsense Guide \par}
+    \vspace{2cm}
+    {\Large \textit{by Rishikesh Giridhar} \par}
+    \vfill
+    {\large \today \par}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\chapter{Introduction}
+
+\section*{You Think You Know Linux?}
+
+So, you’ve used Linux before. Maybe Ubuntu. Maybe Mint. Fedora if you're feeling fancy. You’ve clicked your way through an installer, watched as some wizard held your hand, and then said to yourself, “Hey, I use Linux now.”
+
+But here's the thing: you don’t.
+
+Those aren’t Linux — those are Linux-flavoured illusions. Training wheels bolted onto a tricycle, wrapped in bubble wrap. If you’ve never written your own `fstab`, never mounted a root partition manually, never booted to a blinking cursor in a live environment and built your entire operating system line by line — then you’ve merely touched Linux. You’ve never wielded it.
+
+Enter Arch Linux.
+
+\section*{Why Arch? Because You Want Control.}
+
+Other distributions try to guess what you want. Arch asks you.
+
+Where others give you a desktop, Arch gives you a shell. Where others offer security through abstraction, Arch offers power through exposure. It is not “user-friendly” in the traditional sense, because its user is not the traditional type. Its user is someone like you — curious, stubborn, tired of the coddling, and ready to truly understand how Linux works.
+
+You don’t “install” Arch. You earn it.
+
+\section*{Because Minimalism Isn't a Style — It's a Statement}
+
+Arch doesn't come with a GUI, and that’s not a bug — it’s a feature. It installs only what you explicitly tell it to. No junk. No clipboard managers. No software centres. No 15 background services you never asked for. Just the kernel, the essentials, and you.
+
+Want GNOME? Install it. Want i3? Build it. Want nothing but a terminal forever like a proper chad? Stay there.
+
+Arch is as small or as expansive as you want it to be. You’re not fighting the system — you’re designing it.
+
+\section*{“But My Distro Just Works” — Does It, Though?}
+
+Ah yes, the phrase that always precedes a help thread titled *“Why did my update break my desktop?”* You see, when your system is built from the ground up, when you know what every daemon, mount point, and config file is doing, then when something breaks, you don’t panic. You fix it.
+
+Because you know it. Because you built it.
+
+And updates? Arch is a rolling release — not some outdated stable-core nonsense. You get the latest kernel, latest drivers, latest software, on your terms. You're not stuck six months behind waiting for some release freeze to thaw.
+
+\section*{Gaslighting? No — We’re Just Honest}
+
+Look, if you think your click-and-install distro is “basically the same” as Arch, that’s fine. You’re entitled to your beliefs, however adorably incorrect they might be.
+
+But let’s be real.
+
+When you say “I use Linux” and someone asks “Oh, which distro?”, and you reply “Arch”, the conversation ends. You win. Because everyone knows: the person who uses Arch doesn’t just use Linux — they understand it. They command it.
+
+You’re not someone running Linux.
+
+You’re someone running Arch.
+
+\section*{This Book Is Your Rite of Passage}
+
+This guide will walk you through every step: from downloading the ISO to booting into your newly forged Arch install. No fluff. No pre-chewed tutorials. Real commands. Real choices. Real Linux.
+
+If you're not ready to get your hands dirty, turn back now. There are easier paths — full of GUIs and safety nets. But if you're ready to see the truth behind the terminal, to graduate from “user” to “builder”, then welcome.
+
+This is where it starts.
+
+\clearpage
+
+
+\chapter{Preinstallation}
+
+\section*{You Don't Just Install Arch. You Prepare For It.}
+
+Welcome to the stage before the stage. This is the part no one talks about. The part the “5-minute YouTube Arch install” videos skip right over. But not you. You, brave reader, are here to do it properly.
+
+This chapter is about preparation. Because installing Arch without proper setup is like parachuting with a trash bag — it's bold, but also very stupid.
+
+Let’s get into the meat.
+
+\section*{Step 1: Downloading the ISO (Yes, Correctly)}
+
+You’re going to download the official Arch Linux ISO image. Not from some dodgy Reddit mirror. From the source of all truth:
+
+\begin{lstlisting}
+https://archlinux.org/download
+\end{lstlisting}
+
+Once you open this link, you’ll see a list of mirrors grouped by country. These are maintained by community and university hosts. Find your country, or the one closest to you geographically. For example:
+
+\begin{itemize}
+  \item If you're in India, select one of the IIT mirrors or TUNA (China) if faster.
+  \item If you're in Europe, stick to local NLU or university mirrors (e.g., Germany → TU Dresden).
+  \item In the US? Use kernel.org, MIT, or OSL mirrors.
+\end{itemize}
+
+Once you choose your mirror, download the file named something like:
+
+\begin{lstlisting}
+archlinux-YYYY.MM.DD-x86_64.iso
+\end{lstlisting}
+
+Replace `YYYY.MM.DD` with the release date (e.g., `2025.07.01`).
+
+\textbf{Also download the `.sig` file} — this is the cryptographic signature used to verify the ISO is not tampered with.
+
+\subsection*{Why We Verify:}
+
+Yes, you really should verify the ISO. Here's why:
+
+- The `.sig` file is signed with a GPG key owned by the Arch Linux release manager.
+- If someone tampered with your ISO (hello, supply chain attacks), this check would fail.
+
+\subsection*{How to Verify:}
+
+First, get the key:
+\begin{lstlisting}
+gpg --keyserver hkps://keyserver.ubuntu.com --recv-keys 9766E084FB0F43D8
+\end{lstlisting}
+
+> `9766E084FB0F43D8` is the long-form fingerprint of the official Arch ISO signing key.
+
+Then verify:
+\begin{lstlisting}
+gpg --verify archlinux-2025.07.01-x86_64.iso.sig
+\end{lstlisting}
+
+If the output says:
+```
+
+Good signature from "Pierre Schmitz [pierre@archlinux.org](mailto:pierre@archlinux.org)"
+
+```
+You're golden. If not, throw that ISO out like expired milk.
+
+\section*{Step 2: Flashing the ISO to a USB Drive}
+
+\textbf{Do not “open the ISO” and copy its files. That’s not how bootable drives work.}
+
+\subsection*{Option A: Windows — Use Rufus (The Only Acceptable GUI Method)}
+
+1. Download Rufus from: \url{https://rufus.ie}
+2. Plug in your USB drive (at least 2GB).
+3. Open Rufus → Select your ISO.
+4. \textbf{Important:} Choose “DD mode” if prompted. Not “ISO mode.”
+5. Start.
+
+\subsection*{Option B: Linux — Use dd (aka Disk Destroyer)}
+
+\begin{lstlisting}
+sudo dd if=archlinux-2025.07.01-x86_64.iso of=/dev/sdX bs=4M status=progress oflag=sync
+\end{lstlisting}
+
+- `if=` = input file (your ISO)
+- `of=` = output file (your USB device, like `/dev/sdb` — not a partition like `/dev/sdb1`)
+- `bs=4M` = block size, optimal for speed
+- `status=progress` = shows progress
+- `oflag=sync` = ensures all writes are flushed to disk
+
+Double check using `lsblk` to make sure `/dev/sdX` is really your USB drive.
+
+\section*{Step 3: Boot Into the USB Drive (Not Your OS)}
+
+Insert the USB into your target machine.
+
+Reboot and spam your BIOS/UEFI boot menu key (often `F12`, `F10`, `DEL`, `ESC`, or `F2`).
+
+From the boot menu, select your USB device. If it says “UEFI: Sandisk”, pick that.
+
+If it boots correctly, you'll see:
+
+``
+Arch Linux boot menu
+Boot Arch Linux (x86\_64)
+''
+
+
+Select it and hit enter. You should land in a live shell.
+
+If you land in a graphical installer, you downloaded the wrong distro. Reevaluate your life choices.
+
+\section*{Step 4: UEFI or Legacy (Spoiler: It Better Be UEFI)}
+
+We don't do BIOS installs in the year of our Lord 2025.
+
+Check:
+\begin{lstlisting}
+ls /sys/firmware/efi/efivars
+\end{lstlisting}
+
+If the folder exists, you’re booted in UEFI mode.  
+If not, reboot, enter your firmware settings, and enable:
+
+\begin{itemize}
+  \item “UEFI Mode” or “UEFI Only”
+  \item Disable “Legacy Boot” or “CSM”
+  \item Secure Boot: OFF (for now)
+\end{itemize}
+
+\section*{Step 5: Connect to the Internet}
+
+\subsection*{A. Ethernet (Wired)? Lucky You. You're Already Online.}
+
+To test:
+\begin{lstlisting}
+ping archlinux.org
+\end{lstlisting}
+
+If you get output with response times, you’re in.
+
+\subsection*{B. Wi-Fi (You Like Pain)?}
+
+First, start the `iwd` shell:
+\begin{lstlisting}
+iwctl
+\end{lstlisting}
+
+Then:
+
+\begin{lstlisting}
+device list                # See your wireless interface, e.g., wlan0
+station wlan0 scan        # Scans nearby Wi-Fi
+station wlan0 get-networks
+station wlan0 connect YourWiFiName
+\end{lstlisting}
+
+You’ll be prompted for your Wi-Fi password.  
+If it fails, try again. If it keeps failing, check if:
+
+- Your Wi-Fi is 5GHz-only and your adapter is 2.4GHz.
+- You typed the password like a potato.
+- You need to unblock the device: `rfkill unblock wifi`
+
+\section*{Step 6: Sync the System Clock (Don’t Skip This!)}
+
+\begin{lstlisting}
+timedatectl set-ntp true
+\end{lstlisting}
+
+This enables automatic time sync via NTP (Network Time Protocol). If your clock is wrong, `pacman` will cry, signatures will fail, and you’ll blame Arch instead of yourself.
+
+Check:
+\begin{lstlisting}
+timedatectl status
+\end{lstlisting}
+
+Look for:
+``
+
+System clock synchronized: yes
+
+''
+
+If it says “no,” you’re probably offline or behind a captive portal.
+
+\section*{Step 7: Identify Your Drives (Don't Wipe Windows Unless You Mean To)}
+
+Use:
+\begin{lstlisting}
+lsblk
+\end{lstlisting}
+
+You'll see a tree of devices:
+
+\begin{lstlisting}
+NAME   MAJ\:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda      8:0    0 232.9G  0 disk
+├─sda1   8:1    0   512M  0 part
+├─sda2   8:2    0   100G  0 part
+nvme0n1     259:0 0 476.9G 0 disk
+├─nvme0n1p1 259:1 0   512M 0 part
+├─nvme0n1p2 259:2 0 100.0G 0 part
+
+\end{lstlisting}
+
+- `sda`, `nvme0n1`, etc. are disks
+- `sda1`, `nvme0n1p2` are partitions
+
+You can also run:
+\begin{lstlisting}
+fdisk -l
+\end{lstlisting}
+
+Look at the sizes and filesystems. Windows partitions often show as `NTFS`. You’ll want to install Arch on a separate disk or partition, or yeet the whole drive (with backups, obviously).
+
+\section*{You Are Now Ready}
+
+Once you’ve:
+
+\begin{itemize}
+  \item Booted via UEFI
+  \item Verified and flashed the Arch ISO
+  \item Connected to the internet
+  \item Synced your clock
+  \item Identified your disks
+\end{itemize}
+
+...you are officially standing at the gates of Arch.
+
+Next up: slicing up your disk with precision using `fdisk` (and not screwing it up).
+
+\clearpage
+
+
+\chapter{Connecting to the Internet}
+
+\section*{You Can’t Install Arch Offline. (Well, Technically You Can, But You Shouldn’t.)}
+
+The first thing any good Arch wizard does after booting into the live environment is ensure they are online. Why? Because you’re about to pull the entire base system from Arch repositories via `pacstrap`, and unless you've memorised every binary ever made (you haven't), you’ll need the internet.
+
+This chapter covers how to connect to the internet, whether you’re blessed with Ethernet or condemned to suffer through Wi-Fi.
+
+\section{Wired Ethernet — The True Master Race}
+
+Let’s start with the easiest, most reliable method: plugging in a cable.
+
+If your system is connected to a router via Ethernet, congratulations. You’re probably already online.
+
+\subsection*{Step 1: Test the connection}
+
+\begin{lstlisting}
+ping archlinux.org
+\end{lstlisting}
+
+You should see a repeating output like:
+
+\begin{lstlisting}
+64 bytes from archlinux.org (95.217.163.246): icmp_seq=1 ttl=51 time=128 ms
+\end{lstlisting}
+
+To stop it, hit `Ctrl + C`.
+
+If this works, you’re online. Proceed to the next chapter. Seriously. You're done here.
+
+If not? The cable may be bad, your router may be dumb, or your DHCP isn't assigning IPs. Let’s troubleshoot later.
+
+\section{Wireless — The Path of Pain}
+
+Connecting via Wi-Fi is possible — just not as instant. You’ll need to use the **IWD** (iNet Wireless Daemon) system included in the Arch ISO.
+
+\subsection*{Step 1: Launch IWD interactive shell}
+
+\begin{lstlisting}
+iwctl
+\end{lstlisting}
+
+This opens the IWD shell. It should look something like:
+
+\begin{lstlisting}
+[iwd]#
+\end{lstlisting}
+
+If you see that, you're inside the network manager. If not, you may not have a supported wireless card.
+
+\subsection*{Step 2: List wireless devices}
+
+\begin{lstlisting}
+device list
+\end{lstlisting}
+
+Look for something like:
+
+\begin{lstlisting}
+Device: wlan0
+  Type: wifi
+\end{lstlisting}
+
+Take note of the interface name — usually `wlan0`, `wlp3s0`, or `wlan1`. We’ll use it below.
+
+\subsection*{Step 3: Scan for networks}
+
+\begin{lstlisting}
+station wlan0 scan
+\end{lstlisting}
+
+(Replace `wlan0` with your actual device name if different.)
+
+Then, list the results:
+
+\begin{lstlisting}
+station wlan0 get-networks
+\end{lstlisting}
+
+This will show a list of all nearby SSIDs.
+
+\subsection*{Step 4: Connect to a network}
+
+\begin{lstlisting}
+station wlan0 connect YourWiFiSSID
+\end{lstlisting}
+
+> You’ll be prompted for the password.
+
+If it says "Connected", then congratulations — you’re online.
+
+\subsection*{Step 5: Exit the shell}
+
+\begin{lstlisting}
+exit
+\end{lstlisting}
+
+Now test connectivity:
+
+\begin{lstlisting}
+ping archlinux.org
+\end{lstlisting}
+
+If you see replies, it worked. If not? Read the next section.
+
+\section{Common Wi-Fi Failures and Fixes}
+
+\subsection*{1. “Operation Failed” or “No Device” in iwctl?}
+
+Run:
+
+\begin{lstlisting}
+rfkill list all
+\end{lstlisting}
+
+If any line shows “soft blocked: yes” or “hard blocked: yes”, unblock it:
+
+\begin{lstlisting}
+rfkill unblock all
+\end{lstlisting}
+
+Then retry `iwctl`.
+
+\subsection*{2. iwctl says connected but ping doesn’t work?}
+
+Run:
+
+\begin{lstlisting}
+ip a
+\end{lstlisting}
+
+If you don’t see an IP address under your Wi-Fi interface, then DHCP failed. Try:
+
+\begin{lstlisting}
+systemctl restart iwd
+\end{lstlisting}
+
+Or restart the whole shell:
+
+\begin{lstlisting}
+exit
+iwctl
+\end{lstlisting}
+
+Still nothing? Reboot and try again. Sometimes it’s the firmware (especially on Broadcom or Realtek cards).
+
+\section{Legacy Option: wifi-menu (Only Available on netctl-based ISOs)}
+
+Some very old Arch ISOs ship with `wifi-menu`:
+
+\begin{lstlisting}
+wifi-menu
+\end{lstlisting}
+
+This launches an ncurses-based selector for wireless networks. It’s deprecated and usually not present in modern ISOs, but if your ISO has it, and `iwctl` doesn’t work, give it a go.
+
+\section{Using a Static IP (Edge Case or Emergency)}
+
+If your router is broken, or you’re in a network without DHCP, you can assign a static IP manually.
+
+Example:
+
+\begin{lstlisting}
+ip link set wlan0 up
+ip addr add 192.168.1.100/24 dev wlan0
+ip route add default via 192.168.1.1
+\end{lstlisting}
+
+Then set a DNS resolver:
+
+\begin{lstlisting}
+echo "nameserver 1.1.1.1" > /etc/resolv.conf
+\end{lstlisting}
+
+Now try `ping archlinux.org`.
+
+\section{Confirming You’re Online}
+
+No matter which method you used, always confirm with:
+
+\begin{lstlisting}
+ping archlinux.org
+\end{lstlisting}
+
+If that works, you're ready to install Arch.
+
+If not, no shame in retrying — but do not proceed until this works. No internet = no pacstrap = no Arch.
+
+\clearpage
+
+\chapter{Partitioning the Disk}
+
+\section*{Look Me in the Eye and Tell Me You're Ready to Wipe a Drive}
+
+This is it — the point of no return. From here on out, you’re not just reading. You’re carving your will into silicon. One wrong device name and you might wipe your Windows partition, your family photos, your tax returns, and any shred of dignity.
+
+Which is exactly why we’re going to do it right.
+
+\section{The Boot Mode Dictates Your Partition Style}
+
+Before anything else, make absolutely sure you’re booted in **UEFI mode**. Run:
+
+\begin{lstlisting}
+ls /sys/firmware/efi/efivars
+\end{lstlisting}
+
+If that directory exists — you're good. Proceed with GPT partitioning (the modern standard).
+
+If it doesn’t exist, you're in Legacy BIOS mode. That’s fine too (just worse). We’ll handle that in a separate section.
+
+\subsection*{Wait — What’s GPT vs MBR?}
+
+- **GPT (GUID Partition Table)**: Modern. Required for UEFI. Supports more than 4 partitions. Safer and better aligned.
+- **MBR (Master Boot Record)**: Ancient BIOS format. Limited. Clunky. Avoid unless your firmware forces it.
+
+Unless your PC is from the Jurassic era, use GPT.
+
+\section{Identify the Target Disk (Don't Wipe the Wrong One)}
+
+Run:
+
+\begin{lstlisting}
+lsblk
+\end{lstlisting}
+
+Example output:
+
+\begin{lstlisting}
+NAME        MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda           8:0    0 232.9G  0 disk
+nvme0n1     259:0    0 476.9G  0 disk
+├─nvme0n1p1 259:1    0   512M  0 part /boot
+├─nvme0n1p2 259:2    0   476G  0 part /
+\end{lstlisting}
+
+Look at the SIZE column. If you're installing onto a blank SSD, it's probably `/dev/sda` or `/dev/nvme0n1`.
+
+If you’re unsure — stop. Double check. Remove all drives except the one you want to install on.
+
+\section{Partition Layout (UEFI Scheme)}
+
+For a typical UEFI install, here’s what we want:
+
+\begin{itemize}
+  \item `/dev/sdX1` → EFI System Partition (512MB, FAT32)
+  \item `/dev/sdX2` → Root (`/`) partition (rest of the disk, ext4)
+  \item [Optional] `/dev/sdX3` → Swap or Home
+\end{itemize}
+
+No need to overcomplicate it. One root partition is all Arch needs.
+
+\section{Using \texttt{fdisk} (Beginner-Friendly, Deadly If You Panic)}
+
+Start `fdisk`:
+
+\begin{lstlisting}
+fdisk /dev/sdX
+\end{lstlisting}
+
+Replace `/dev/sdX` with your actual disk. NOT a partition (e.g. NOT `/dev/sda1`).
+
+\subsection*{Step-by-step fdisk (GPT Mode):}
+
+1. Press `g` → creates a new GPT partition table (wipes the drive)
+2. Press `n` → create new partition
+   - Partition number: 1
+   - First sector: press Enter
+   - Last sector: `+512M`
+   - Type: `t`, then type code: `1` (EFI System)
+3. Press `n` again → create root partition
+   - Partition number: 2
+   - Accept defaults for rest of disk
+4. (Optional) Press `n` again → swap partition
+   - Set size like `+8G`
+   - Set type to `19` (Linux swap)
+
+Once done:
+
+\begin{lstlisting}
+w
+\end{lstlisting}
+
+`w` = write changes and exit. There is no undo.
+
+\section{Using \texttt{cgdisk} (For Visual Learners Who Like Retro Interfaces)}
+
+\begin{lstlisting}
+cgdisk /dev/sdX
+\end{lstlisting}
+
+You’ll get a TUI interface. It’s self-explanatory:
+
+- Use arrows to select “New”
+- Type partition sizes like `512M`, `100%`
+- Set type codes:
+  - `EF00` for EFI System
+  - `8300` for Linux filesystem
+  - `8200` for Linux swap
+
+Write changes and exit.
+
+\section{Formatting the Partitions}
+
+Now that you’ve sliced the disk, time to give them filesystems.
+
+\subsection*{EFI Partition (FAT32):}
+
+\begin{lstlisting}
+mkfs.fat -F32 /dev/sdX1
+\end{lstlisting}
+
+\subsection*{Root Partition (ext4):}
+
+\begin{lstlisting}
+mkfs.ext4 /dev/sdX2
+\end{lstlisting}
+
+\subsection*{Optional: Swap Partition}
+
+Create and activate it:
+
+\begin{lstlisting}
+mkswap /dev/sdX3
+swapon /dev/sdX3
+\end{lstlisting}
+
+Note: Swap is optional. With 8GB+ RAM, you don’t really need it unless you plan to hibernate.
+
+\section{Mounting the Filesystems}
+
+Arch doesn't do this for you — you must mount everything manually.
+
+\begin{lstlisting}
+mount /dev/sdX2 /mnt
+mkdir /mnt/boot
+mount /dev/sdX1 /mnt/boot
+\end{lstlisting}
+
+If you created a separate home partition:
+
+\begin{lstlisting}
+mkdir /mnt/home
+mount /dev/sdX4 /mnt/home
+\end{lstlisting}
+
+At this point, your disk layout should look like this:
+
+\begin{lstlisting}
+/
+├── boot      → mounted from /dev/sdX1
+├── (root)    → mounted from /dev/sdX2
+├── home      → optionally /dev/sdX4
+└── swap      → activated via swapon
+\end{lstlisting}
+
+\section{Verify Mounts}
+
+Run:
+
+\begin{lstlisting}
+lsblk -f
+\mount | grep mnt
+\end{lstlisting}
+
+Make sure all mount points are correct. If not, unmount and try again.
+
+\section{If You’re Using BIOS (MBR) Boot Instead...}
+
+Rare, but here’s the rundown:
+
+- Use `fdisk` with `o` to create a DOS partition table
+- First partition: root (`/`) → type 83 (Linux)
+- Optional: second partition for swap → type 82
+- No EFI partition needed
+- Format and mount as above
+
+Note: You will use GRUB as your bootloader instead of systemd-boot.
+
+\section{Final Checkpoint}
+
+✅ Drive is partitioned  
+✅ Filesystems are created  
+✅ Mount points are ready  
+✅ Swap is active (if used)  
+✅ You didn’t nuke the wrong disk
+
+You're ready to `pacstrap` this beast into existence.
+
+\clearpage
+
+
+\chapter{Installing the Base System}
+
+\section*{Time to Put Flesh on the Skeleton}
+
+You’ve prepped the disk. You’ve mounted your partitions. `/mnt` is waiting — hollow, empty, full of possibility.
+
+Now comes the moment Arch veterans call “pacstrapping.” This is where you install the base packages that form the foundation of your Linux system.
+
+You’re not clicking checkboxes. You’re calling down the barest, rawest, most essential components of an operating system — one that does exactly what you tell it to and absolutely nothing else.
+
+\section{What is \texttt{pacstrap}?}
+
+`pacstrap` is a special Arch install tool. It installs packages into a target root directory — in our case, `/mnt`.
+
+So, when you run:
+
+\begin{lstlisting}
+pacstrap -K /mnt base linux linux-firmware
+\end{lstlisting}
+
+Here’s what each part does:
+
+- `-K`: Copies your current machine’s package signing keys to the target system (saves you a step later).
+- `/mnt`: Target directory for the installation — you previously mounted your root partition here.
+- `base`: A metapackage that pulls in core utilities (`bash`, `coreutils`, `pacman`, `systemd`, etc.).
+- `linux`: Installs the latest Arch kernel (you can swap this for `linux-lts` or `linux-zen` later).
+- `linux-firmware`: Adds firmware blobs for hardware like Wi-Fi, audio, GPUs, etc.
+
+\section{Minimal Example — Barebones Install}
+
+\begin{lstlisting}
+pacstrap -K /mnt base linux linux-firmware
+\end{lstlisting}
+
+This is enough to boot, configure, and later install your user environment.
+
+\section{Commonly Added Packages (Optional but Useful)}
+
+You can also throw in:
+
+\begin{lstlisting}
+pacstrap -K /mnt base linux linux-firmware vim nano man-db man-pages texinfo
+\end{lstlisting}
+
+Explanation:
+
+- `vim` or `nano`: Text editors. Choose your pain.
+- `man-db`, `man-pages`, `texinfo`: Documentation. So you don’t have to Google how `mount` works at 3AM.
+
+Want a network manager? You’ll install that later, *inside* the chroot. Don’t worry about it now.
+
+\section{What \texttt{/mnt} Is, Really}
+
+Right now, `/mnt` is where your future system lives. Every command you give from this point forward that mentions `/mnt` is configuring your soon-to-be root filesystem.
+
+When you chroot into it, `/mnt` will become `/`. You’ll be inside your new system. But for now, we’re still outside — gently crafting its skeleton.
+
+\section{Creating the \texttt{fstab} — The System's Map of Your Disk}
+
+`fstab` tells the system how to mount disks and partitions automatically at boot.
+
+To generate it:
+
+\begin{lstlisting}
+genfstab -U /mnt >> /mnt/etc/fstab
+\end{lstlisting}
+
+- `-U`: Uses UUIDs (universally unique identifiers) instead of `/dev/sdX` — avoids confusion when device names change.
+- `>>`: Appends output to the fstab file.
+- `/mnt/etc/fstab`: The config file that gets created.
+
+\subsection*{Verify It:}
+
+Just to be safe, always check the file:
+
+\begin{lstlisting}
+cat /mnt/etc/fstab
+\end{lstlisting}
+
+You should see entries for `/`, `/boot`, and `swap` (if used), like:
+
+\begin{lstlisting}
+/dev/nvme0n1p2 UUID=abc123... / ext4 defaults 0 1
+/dev/nvme0n1p1 UUID=def456... /boot vfat defaults 0 2
+\end{lstlisting}
+
+If anything looks wrong — redo the mount and generate fstab again.
+
+\section{Enter the Void: \texttt{arch-chroot}}
+
+Now it’s time to step into your new system and take control.
+
+\begin{lstlisting}
+arch-chroot /mnt
+\end{lstlisting}
+
+You’ll land in what looks like your usual shell, but you're now *inside* your installed system. You can configure it just like any regular Arch install from here.
+
+From this point forward, any changes you make (like setting passwords, locale, hostname, installing packages) will be to your new system — not the live ISO.
+
+Welcome home, user. You’ve built your skeleton.
+
+\section*{Checklist Before Moving On}
+
+✅ `pacstrap` ran without errors  
+✅ `fstab` was generated and looks correct  
+✅ You can `arch-chroot` into the new system  
+✅ You understand `/mnt` is your root-to-be
+
+If all that's done, you’re ready to give this beast a soul — hostname, locale, time, users, bootloader, the lot. But that’s in the next chapter.
+
+\clearpage
+
+
+\chapter{Configuring the System}
+\section{Fstab}
+\begin{lstlisting}
+genfstab -U /mnt >> /mnt/etc/fstab
+\end{lstlisting}
+
+\section{Chroot and Time}
+\begin{lstlisting}
+arch-chroot /mnt
+ln -sf /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
+hwclock --systohc
+\end{lstlisting}
+
+\section{Locale}
+\begin{lstlisting}
+vim /etc/locale.gen
+# Uncomment: en_US.UTF-8 UTF-8
+locale-gen
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+\end{lstlisting}
+
+\section{Hostname}
+\begin{lstlisting}
+echo "archmachine" > /etc/hostname
+\end{lstlisting}
+
+\chapter{Bootloader}
+Install `systemd-boot`:
+\begin{lstlisting}
+bootctl install
+\end{lstlisting}
+
+\texttt{/boot/loader/entries/arch.conf}:
+\begin{lstlisting}
+title   Arch Linux
+linux   /vmlinuz-linux
+initrd  /initramfs-linux.img
+options root=PARTUUID=...
+\end{lstlisting}
+
+\chapter{Final Steps}
+\begin{lstlisting}
+passwd
+exit
+umount -R /mnt
+reboot
+\end{lstlisting}
+
+\chapter{After Reboot}
+You now have a minimal Arch Linux installation! Configure your user, networking, packages, and (if desired) a desktop environment next.
+
+\end{document}
