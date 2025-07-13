@@ -1,0 +1,6 @@
+InfoKey: Title
+InfoValue: How To Install Arch Linux
+InfoKey: Author
+InfoValue: Rishikesh Giridhar
+InfoKey: Subject
+InfoValue: Arch Linux GuideBook
