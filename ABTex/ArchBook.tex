@@ -1541,4 +1541,164 @@ You now wield a **Wayland-powered** desktop Arch system. You didn’t just insta
 
 \clearpage
 
+\chapter{Precepts of the Arch Faithful}
+
+\section*{Before You Install, Understand What You're Installing}
+
+Most people blindly click “Next” through installers and never know what makes their system tick. But Arch Linux doesn’t do *“Next”*.
+
+This chapter is your **deep dive** into what makes your system **boot, breathe, draw, and obey**.
+
+\section{1. The Kernel — The Soul of the System}
+
+At its heart, Linux is **just the kernel** — the core software that talks to your hardware and manages your system's resources.
+
+The kernel does things like:
+
+\begin{itemize}
+  \item Handling memory (RAM allocation)
+  \item Scheduling CPU tasks
+  \item Managing I/O (input/output to devices)
+  \item Enabling hardware features (Wi-Fi, USB, Graphics, etc.)
+\end{itemize}
+
+In Arch, the default kernel is `linux`, but you can also choose others:
+
+\begin{itemize}
+  \item `linux-lts` – Long-term support
+  \item `linux-zen` – Optimised for performance
+  \item `linux-hardened` – Enhanced security
+\end{itemize}
+
+The kernel is stored in `/boot/vmlinuz-linux` and gets loaded at boot time via your bootloader (systemd-boot, GRUB, etc.)
+
+\section{2. initramfs — The Bridge to the Kernel}
+
+When your system boots, it doesn’t jump straight into the root file system. It first loads a temporary one: **initramfs** (Initial RAM Filesystem).
+
+This small image:
+\begin{itemize}
+  \item Loads essential drivers (like filesystem, encryption, LVM)
+  \item Mounts the real root partition
+  \item Hands control over to the actual system (`/`)
+\end{itemize}
+
+It's created using `mkinitcpio`, and lives at `/boot/initramfs-linux.img`.
+
+\section{3. systemd — The Grand Orchestrator}
+
+Once your kernel and root filesystem are live, you need someone to **start services**, manage your login sessions, handle daemons, and coordinate boot stages.
+
+That’s where `systemd` comes in.
+
+It replaces the old SysV-style init system and:
+\begin{itemize}
+  \item Manages services like networking, display manager, audio, etc.
+  \item Handles dependencies (e.g., NetworkManager starts before KDE)
+  \item Provides logging via `journalctl`
+  \item Supports parallel boot for faster startup
+\end{itemize}
+
+You’ll use it all the time:
+\begin{lstlisting}
+systemctl enable bluetooth
+systemctl start NetworkManager
+systemctl set-default graphical.target
+\end{lstlisting}
+
+\section{4. Shell and Terminal — Your First Interface}
+
+The shell is the interface that interprets your commands. It’s not the terminal itself — it’s the program running *inside* the terminal.
+
+\begin{itemize}
+  \item `bash` – Default shell, most common
+  \item `zsh` – Fancy shell with themes and plugins
+  \item `fish` – User-friendly shell with autosuggestions
+\end{itemize}
+
+The **terminal emulator** is the GUI program that gives you access to the shell — like `alacritty`, `gnome-terminal`, `konsole`, etc.
+
+\section{5. Display Server — How Graphics Get Drawn}
+
+You can’t show windows without a display server.
+
+\subsection*{X11 (xorg)}
+
+The original. Decades old. Works fine. Supported everywhere. But:
+
+\begin{itemize}
+  \item No security between apps
+  \item Janky multi-monitor support
+  \item Doesn't scale well on HiDPI screens
+\end{itemize}
+
+\subsection*{Wayland (Modern Default)}
+
+The new standard. Used by GNOME, KDE, Sway, Hyprland.
+
+\begin{itemize}
+  \item Per-app security and isolation
+  \item Tear-free rendering
+  \item Fractional scaling works properly
+  \item Compositing is built-in
+\end{itemize}
+
+Arch supports both — but Wayland is the **default for modern systems**.
+
+\section{6. Desktop Environment — The Furniture of Your OS}
+
+A Desktop Environment (DE) is a full suite of software that gives you a graphical experience:
+
+\begin{itemize}
+  \item A window manager (to place and move windows)
+  \item Panels, app launchers, system tray, settings
+  \item Themes, compositors, wallpapers, login screen
+\end{itemize}
+
+Examples:
+
+\begin{itemize}
+  \item \textbf{GNOME} — Opinionated, Wayland-first, great out of the box
+  \item \textbf{KDE Plasma} — Customisable to death, fast and beautiful
+  \item \textbf{XFCE} — Lightweight and no-nonsense
+  \item \textbf{i3/Sway} — Tiling WMs for keyboard gods
+\end{itemize}
+
+You can even build your own DE from just a WM + panel + launcher.
+
+\section{7. How Arch Works — Rolling, Minimal, Transparent}
+
+Arch Linux has no versions. You install once, update forever.
+
+\begin{itemize}
+  \item Rolling release model: updates are constant, not periodic
+  \item No default DE: you install only what you want
+  \item Pacman: powerful package manager
+  \item AUR: community-contributed packages (via `yay`, `paru`, etc.)
+  \item ArchWiki: best documentation on Earth (literally)
+\end{itemize}
+
+There are no defaults, no assumptions. You are the architect.
+
+\section{8. Why the Install is Manual (And Why It Matters)}
+
+You’ve already noticed: installing Arch is not plug-and-play.
+
+That’s by design.
+
+\begin{itemize}
+  \item You learn every step — from partitioning to bootloading
+  \item You know exactly what’s installed (no bloat)
+  \item You fix your own system because you understand it
+\end{itemize}
+
+Once installed, your Arch system is:
+\begin{itemize}
+  \item Minimal — nothing you didn’t ask for
+  \item Bleeding edge — always the latest Linux tech
+  \item Totally yours — configured how *you* want
+\end{itemize}
+
+\clearpage
+
 \end{document}
