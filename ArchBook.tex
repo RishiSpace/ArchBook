@@ -1,4 +1,4 @@
-\documentclass[12pt]{book}
+\documentclass[12pt,openany]{book}
 
 \usepackage[a4paper, margin=0.75in]{geometry}
 \usepackage{fancyhdr}
@@ -39,7 +39,7 @@
 }
 
 \pagestyle{fancy}
-\setlength{\headheight}{14.5pt} % <-- Add this line
+\setlength{\headheight}{14.5pt} 
 \fancyhf{}
 \fancyhead[LE,RO]{\thepage}
 \fancyhead[RE]{\nouppercase{\leftmark}}
@@ -52,7 +52,7 @@
     \vspace*{4cm}
     {\Huge\bfseries How to install Arch Linux \par}
     \vspace{1cm}
-    {\Large A Barebones, No-Nonsense Guide \par}
+    {\Large A Barebones, Cheesy, yet No-Nonsense Guide \par}
     \vspace{2cm}
     {\Large \textit{by Rishikesh Giridhar} \par}
     \vfill
@@ -65,6 +65,7 @@
 \chapter{Introduction}
 
 \section*{You Think You Know Linux?}
+\addcontentsline{toc}{section}{You Think You Know Linux?}
 
 So, you’ve used Linux before. Maybe Ubuntu. Maybe Mint. Fedora if you're feeling fancy. You’ve clicked your way through an installer, watched as some wizard held your hand, and then said to yourself, “Hey, I use Linux now.”
 
@@ -75,6 +76,7 @@ Those aren’t Linux — those are Linux-flavoured illusions. Training wheels bo
 Enter Arch Linux.
 
 \section*{Why Arch? Because You Want Control.}
+\addcontentsline{toc}{section}{Why Arch? Because You Want Control.}
 
 Other distributions try to guess what you want. Arch asks you.
 
@@ -83,6 +85,7 @@ Where others give you a desktop, Arch gives you a shell. Where others offer secu
 You don’t “install” Arch. You earn it.
 
 \section*{Because Minimalism Isn't a Style — It's a Statement}
+\addcontentsline{toc}{section}{Because Minimalism Isn't a Style — It's a Statement}
 
 Arch doesn't come with a GUI, and that’s not a bug — it’s a feature. It installs only what you explicitly tell it to. No junk. No clipboard managers. No software centres. No 15 background services you never asked for. Just the kernel, the essentials, and you.
 
@@ -91,6 +94,7 @@ Want GNOME? Install it. Want i3? Build it. Want nothing but a terminal forever l
 Arch is as small or as expansive as you want it to be. You’re not fighting the system — you’re designing it.
 
 \section*{“But My Distro Just Works” — Does It, Though?}
+\addcontentsline{toc}{section}{“But My Distro Just Works” — Does It, Though?}
 
 Ah yes, the phrase that always precedes a help thread titled *“Why did my update break my desktop?”* You see, when your system is built from the ground up, when you know what every daemon, mount point, and config file is doing, then when something breaks, you don’t panic. You fix it.
 
@@ -99,6 +103,7 @@ Because you know it. Because you built it.
 And updates? Arch is a rolling release — not some outdated stable-core nonsense. You get the latest kernel, latest drivers, latest software, on your terms. You're not stuck six months behind waiting for some release freeze to thaw.
 
 \section*{Gaslighting? No — We’re Just Honest}
+\addcontentsline{toc}{section}{Gaslighting? No — We’re Just Honest}
 
 Look, if you think your click-and-install distro is “basically the same” as Arch, that’s fine. You’re entitled to your beliefs, however adorably incorrect they might be.
 
@@ -111,6 +116,7 @@ You’re not someone running Linux.
 You’re someone running Arch.
 
 \section*{This Book Is Your Rite of Passage}
+\addcontentsline{toc}{section}{This Book Is Your Rite of Passage}
 
 This guide will walk you through every step: from downloading the ISO to booting into your newly forged Arch install. No fluff. No pre-chewed tutorials. Real commands. Real choices. Real Linux.
 
@@ -124,6 +130,7 @@ This is where it starts.
 \chapter{Preinstallation}
 
 \section*{You Don't Just Install Arch. You Prepare For It.}
+\addcontentsline{toc}{section}{You Don't Just Install Arch. You Prepare For It.}
 
 Welcome to the stage before the stage. This is the part no one talks about. The part the “5-minute YouTube Arch install” videos skip right over. But not you. You, brave reader, are here to do it properly.
 
@@ -132,6 +139,7 @@ This chapter is about preparation. Because installing Arch without proper setup 
 Let’s get into the meat.
 
 \section*{Step 1: Downloading the ISO (Yes, Correctly)}
+\addcontentsline{toc}{section}{Step 1: Downloading the ISO (Yes, Correctly)}
 
 You’re going to download the official Arch Linux ISO image. Not from some dodgy Reddit mirror. From the source of all truth:
 
@@ -179,6 +187,7 @@ gpg --verify archlinux-2025.07.01-x86_64.iso.sig
 \end{lstlisting}
 
 If the output says:
+
 ```
 
 Good signature from "Pierre Schmitz [pierre@archlinux.org](mailto:pierre@archlinux.org)"
@@ -187,6 +196,7 @@ Good signature from "Pierre Schmitz [pierre@archlinux.org](mailto:pierre@archlin
 You're golden. If not, throw that ISO out like expired milk.
 
 \section*{Step 2: Flashing the ISO to a USB Drive}
+\addcontentsline{toc}{section}{Step 2: Flashing the ISO to a USB Drive}
 
 \textbf{Do not “open the ISO” and copy its files. That’s not how bootable drives work.}
 
@@ -213,6 +223,7 @@ sudo dd if=archlinux-2025.07.01-x86_64.iso of=/dev/sdX bs=4M status=progress ofl
 Double check using `lsblk` to make sure `/dev/sdX` is really your USB drive.
 
 \section*{Step 3: Boot Into the USB Drive (Not Your OS)}
+\addcontentsline{toc}{section}{Step 3: Boot Into the USB Drive (Not Your OS)}
 
 Insert the USB into your target machine.
 
@@ -233,6 +244,7 @@ Select it and hit enter. You should land in a live shell.
 If you land in a graphical installer, you downloaded the wrong distro. Reevaluate your life choices.
 
 \section*{Step 4: UEFI or Legacy (Spoiler: It Better Be UEFI)}
+\addcontentsline{toc}{section}{Step 4: UEFI or Legacy (Spoiler: It Better Be UEFI)}
 
 We don't do BIOS installs in the year of our Lord 2025.
 
@@ -251,6 +263,7 @@ If not, reboot, enter your firmware settings, and enable:
 \end{itemize}
 
 \section*{Step 5: Connect to the Internet}
+\addcontentsline{toc}{section}{Step 5: Connect to the Internet}
 
 \subsection*{A. Ethernet (Wired)? Lucky You. You're Already Online.}
 
@@ -285,6 +298,7 @@ If it fails, try again. If it keeps failing, check if:
 - You need to unblock the device: `rfkill unblock wifi`
 
 \section*{Step 6: Sync the System Clock (Don’t Skip This!)}
+\addcontentsline{toc}{section}{Step 6: Sync the System Clock (Don’t Skip This!)}
 
 \begin{lstlisting}
 timedatectl set-ntp true
@@ -307,6 +321,7 @@ System clock synchronized: yes
 If it says “no,” you’re probably offline or behind a captive portal.
 
 \section*{Step 7: Identify Your Drives (Don't Wipe Windows Unless You Mean To)}
+\addcontentsline{toc}{section}{Step 7: Identify Your Drives (Don't Wipe Windows Unless You Mean To)}
 
 Use:
 \begin{lstlisting}
@@ -337,6 +352,7 @@ fdisk -l
 Look at the sizes and filesystems. Windows partitions often show as `NTFS`. You’ll want to install Arch on a separate disk or partition, or yeet the whole drive (with backups, obviously).
 
 \section*{You Are Now Ready}
+\addcontentsline{toc}{section}{You Are Now Ready}
 
 Once you’ve:
 
@@ -358,6 +374,7 @@ Next up: slicing up your disk with precision using `fdisk` (and not screwing it 
 \chapter{Connecting to the Internet}
 
 \section*{You Can’t Install Arch Offline. (Well, Technically You Can, But You Shouldn’t.)}
+\addcontentsline{toc}{section}{You Can’t Install Arch Offline. (Well, Technically You Can, But You Shouldn’t.)}
 
 The first thing any good Arch wizard does after booting into the live environment is ensure they are online. Why? Because you’re about to pull the entire base system from Arch repositories via `pacstrap`, and unless you've memorised every binary ever made (you haven't), you’ll need the internet.
 
@@ -548,6 +565,7 @@ If not, no shame in retrying — but do not proceed until this works. No interne
 \chapter{Partitioning the Disk}
 
 \section*{Look Me in the Eye and Tell Me You're Ready to Wipe a Drive}
+\addcontentsline{toc}{section}{Look Me in the Eye and Tell Me You're Ready to Wipe a Drive}
 
 This is it — the point of no return. From here on out, you’re not just reading. You’re carving your will into silicon. One wrong device name and you might wipe your Windows partition, your family photos, your tax returns, and any shred of dignity.
 
